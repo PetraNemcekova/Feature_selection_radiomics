@@ -8,22 +8,16 @@ from scipy.stats import spearmanr
 
 class Basics:
     def Save_List_To_Txt(list_to_save, output_file_name):
-
         with open(output_file_name, 'w') as fp:
             for item in list_to_save :
-                # write each item on a new line
                 fp.write("%s\n" % item)
-
         return()
     
     
     def Read_Feature_Names_Txt_To_List(file_name):
-
         with open(file_name, 'r') as file_to_read:
-
             data = file_to_read.read() 
             data_into_list = data.split("\n") 
-
         return(data_into_list)
     
 class Analysis:
@@ -43,10 +37,8 @@ class Visualisation_of_results:
         table_with_results_cta = pd.read_csv(path_to_table_with_results_cta)
         table_with_results_ncct_unified, table_with_results_cta_unified = Visualisation_of_results.Unify_features_between_acquisitions(table_with_results_ncct = table_with_results_ncct, 
                                                                                                                                        table_with_results_cta = table_with_results_cta)
-
         heatmap_data_normalised_cta = Visualisation_of_results.Preprocessing_for_heatmap_visualisation(table_with_results = table_with_results_cta_unified, sort_by = 'sum')
         heatmap_data_normalised_ncct = Visualisation_of_results.Preprocessing_for_heatmap_visualisation(table_with_results = table_with_results_ncct_unified, sort_by = heatmap_data_normalised_cta.columns.to_list() )
-        # heatmap_data_normalised_ncct = Visualisation_of_results.Preprocessing_for_heatmap_visualisation(table_with_results = table_with_results_ncct_unified, sort_by = 'sum' )
 
         plt.figure(figsize = (8,4))
         plt.tight_layout()
@@ -109,7 +101,7 @@ class Visualisation_of_results:
         return(table_with_results_ncct, table_with_results_cta)
 
 
-path_to_results = 'E:\\Projects\\Stroke\\Feature_selection_results\\Results_selection_share\\'
+path_to_results = ...
 acquisitions = ['ncct', 'cta']
 thresholds = ['0.6','0.5','0.4','0.3']
 folds = ['cv_fold_1', 'cv_fold_2', 'cv_fold_3', 'cv_fold_4', 'cv_fold_5']

@@ -15,33 +15,21 @@ from statsmodels.formula.api import ols
 
 class Basics:
     def Save_List_To_Txt(list_to_save, output_file_name):
-
+        
         with open(output_file_name, 'w') as fp:
             for item in list_to_save :
-                # write each item on a new line
                 fp.write("%s\n" % item)
-
         return()
     
     
     def Read_Feature_Names_Txt_To_List(file_name):
-
+        
         with open(file_name, 'r') as file_to_read:
-
             data = file_to_read.read() 
             data_into_list = data.split("\n") 
-
         return(data_into_list)
 
 class Preprocessing:
-
-    # def Initialize_file_with_results_patients(patient_info, path_to_output_file):
-    #     patients_for_analysis = Preprocessing.Selection_of_balanced_dataset_of_TICIs_binary(patient_tici_info = patient_info, label_of_patient_ID = patient_info.columns[0], label_of_tici = patient_info.columns[1])
-    #     file_with_results = pd.DataFrame(data = {'patient_ID' : patients_for_analysis.iloc[:,0], 'TICI': patients_for_analysis.iloc[:,1]})
-    #     file_with_results.to_csv(path_to_output_file, index= False)
-    #     return(file_with_results['patient_ID'])
-    
-
     def Selection_of_balanced_dataset_of_TICIs_binary(patient_tici_info, label_of_tici):
 
         ticis_labels = np.unique(patient_tici_info[label_of_tici].tolist())[:-1]
@@ -63,11 +51,9 @@ class Preprocessing:
     def remove_features_NaN(all_features_all_patients_df):
 
         all_patients_all_features_without_nans_df = all_features_all_patients_df.dropna(axis = 1)
-
         return(all_patients_all_features_without_nans_df)
        
 class Voxel_preprocessing_one_acquisition():
-
 
     def Normalisation(data_with_metadata_df_to_preprocess, normalisation_method, label_to_save, normalise_through):
 
@@ -162,7 +148,6 @@ class Feature_Selection:
         formula = 'label ~ ' + ' + '.join(training_data.columns)
         learning_model = ols(formula = formula, data = pd.concat([training_data.reset_index(drop = True), pd.DataFrame({'label' : training_labels})], axis = 1)).fit()
         table = sm.stats.anova_lm(learning_model)
-        # features_statisticaly_significant = training_data.columns[np.where(table['PR(>F)']<0.05)]
         sorted_features = table.sort_values(by = 'PR(>F)')['PR(>F)']
 
         return(sorted_features)
@@ -320,46 +305,37 @@ class Dimensional_space:
         return()
 
 if __name__ == "__main__":
-    path_to_maps_noiv_resampled = 'L:\\basic\\divi\\CMAJOIE\\projects\\mahsa_petra\\NOIV\\Last\\F_maps_Resampled_05\\'
-    path_to_maps_noiv_not_resampled = 'L:\\basic\\divi\\CMAJOIE\\projects\\mahsa_petra\\NOIV\\Last\\F_maps_Without_resampling\\'
-    path_to_thr_masks_noiv = 'L:\\basic\\divi\\CMAJOIE\\projects\\mahsa_petra\\NOIV\\Last\\Cropped_Images_Resampled_05\\'
-    path_to_tici_noiv = 'L:\\basic\\divi\\CMAJOIE\\projects\\mahsa_petra\\noiv_clinical_info.csv'    
-    path_to_tici_registry = 'L:\\basic\\divi\\CMAJOIE\\projects\\mahsa_petra\\registry_clinical_info.csv' 
-    path_to_clustered_data = 'L:\\basic\\divi\\CMAJOIE\\projects\\mahsa_petra\\NOIV\\Last\\Final_Final\\'
-    path_to_3D_UMAP_maps = 'L:\\basic\\divi\\CMAJOIE\\projects\\mahsa_petra\\NOIV\\Last\\Clustering_final\\UMAP_maps\\last\\'
-    path_to_csvs = 'L:\\basic\\divi\\CMAJOIE\\projects\\mahsa_petra\\NOIV\\Last\\Final_Final\\Csvs\\'
-    path_to_images = 'L:\\basic\\divi\\CMAJOIE\\projects\\mahsa_petra\\NOIV\\Last\\Final_Final\\Images\\'
-    path_to_feature_maps = 'L:\\basic\\divi\\CMAJOIE\\projects\\mahsa_petra\\NOIV\Last\\F_maps_Resampled_05\\'
-    path_to_txts_of_selected_features = 'L:\\basic\\divi\\CMAJOIE\\projects\\mahsa_petra\\NOIV\\Last\\Feature_selection\\'
+    path_to_maps_resampled = ...
+    path_to_maps_not_resampled = ...
+    path_to_thr_masks_noiv = ...
+    path_to_tici = ...  
+    path_to_csvs = ...
+    path_to_images = ...
+    path_to_feature_maps = ...
+    path_to_txts_of_selected_features = ...
+    path_to_clinical_info = ...
 
     thresholds = [0.6, 0.5, 0.4, 0.3]
     output_file_name_stack = 'concatenated_all_info_noiv_050505'
     acquisitions = ['ncct', 'cta']
     database = 'noiv'
-    
-    if database == 'noiv':
-        ticis = pd.read_csv("L:\\basic\\divi\\CMAJOIE\\projects\\mahsa_petra\\noiv_clinical_info.csv", usecols=['studysubjectid','post_etici'])
-        tici_values = np.unique(ticis['post_etici'].dropna(axis = 0))
 
-    elif database == 'registry':
-        ticis = pd.read_csv("L:\\basic\\divi\\CMAJOIE\\projects\\mahsa_petra\\registry_clinical_info.csv", usecols=['StudySubjectID','posttici_c'])
-        tici_values = np.unique(ticis['posttici_c'].dropna(axis = 0))
+    ticis = pd.read_csv(path_to_clinical_info)
+    tici_values = np.unique(ticis['post_etici'].dropna(axis = 0))
 
     assigned_numbers = np.arange(0,len(tici_values))
     tici_dictionary  = dict(zip(tici_values, assigned_numbers))
 
-
     heterogeneity_map_types = np.unique(['_'.join(filename.split('_')[2:]) for filename in os.listdir(
-        path_to_maps_noiv_not_resampled + '10002\\') if filename.endswith('.nrrd')]).tolist()
+        path_to_maps_not_resampled) if filename.endswith('.nrrd')]).tolist()
     
     
     output_file_name_stack = 'concatenated_all_info_noiv_050505'
-    database_features_all = pd.read_csv(path_to_maps_noiv_resampled +  output_file_name_stack + '.csv' ) # values already without bcg
+    database_features_all = pd.read_csv(path_to_maps_resampled +  output_file_name_stack + '.csv' ) # values already without bcg
     noiv_database_features_without_NaN = Preprocessing.remove_features_NaN(database_features_all)
-    # balanced_dataset_info = Preprocessing.Selection_of_balanced_dataset_of_TICIs_binary(patient_tici_info= ticis, label_of_tici=ticis.columns[1])
-    balanced_dataset_info = pd.read_csv('Balanced_dataset_Successfull_recanalisation.csv')
-    # balanced_dataset_info.columns = [feature_name.replace('-', '_') for feature_name in balanced_dataset_info.columns.to_list()]
-    # balanced_dataset_info.columns = [feature_name.replace('.nrrd', '') for feature_name in balanced_dataset_info.columns.to_list()]
+    balanced_dataset_info = Preprocessing.Selection_of_balanced_dataset_of_TICIs_binary(patient_tici_info= ticis, label_of_tici=ticis.columns[1])
+    balanced_dataset_info.columns = [feature_name.replace('-', '_') for feature_name in balanced_dataset_info.columns.to_list()]
+    balanced_dataset_info.columns = [feature_name.replace('.nrrd', '') for feature_name in balanced_dataset_info.columns.to_list()]
 
     for acquisition in acquisitions: 
 
@@ -368,16 +344,13 @@ if __name__ == "__main__":
                                                                                            normalisation_method = 'min_max', 
                                                                                            label_to_save = 'balanced_dataset_features_noiv_' + acquisition, 
                                                                                            normalise_through = 'Features')
-        # norm_features_all_patients_acq = pd.read_csv('balanced_dataset_features_noiv_' + acquisition + '_min_max_normalised_through_Features.csv')
         metadata_for_selection, features_for_selection = Voxel_preprocessing_one_acquisition.Create_balanced_datasets_for_analysis(dataset = norm_features_all_patients_acq, 
                                                                                   acquisition = acquisition, 
                                                                                   information_about_balanced_dataset = balanced_dataset_info, 
                                                                                   path_to_csv_files = path_to_csvs)
-        # metadata_for_selection = pd.read_csv(r'L:\basic\divi\CMAJOIE\projects\mahsa_petra\NOIV\Last\Final_Final\Csvs\balanced_dataset_voxels_metadata_noiv_ncct.csv')
-        # features_for_selection = pd.read_csv(r'L:\basic\divi\CMAJOIE\projects\mahsa_petra\NOIV\Last\Final_Final\Csvs\balanced_dataset_voxels_features_noiv_ncct.csv').drop('Unnamed: 0', axis = 1)
 
-        # features_for_selection.columns = [feature_name.replace('-', '_') for feature_name in features_for_selection.columns.to_list()]
-        # features_for_selection.columns = [feature_name.replace('.nrrd', '') for feature_name in features_for_selection.columns.to_list()]
+        features_for_selection.columns = [feature_name.replace('-', '_') for feature_name in features_for_selection.columns.to_list()]
+        features_for_selection.columns = [feature_name.replace('.nrrd', '') for feature_name in features_for_selection.columns.to_list()]
 
         for threshold in thresholds:
             
@@ -388,8 +361,8 @@ if __name__ == "__main__":
                                                                                               output_path = path_to_txts_of_selected_features)
 
             features_selected_by_correlation_acq = Basics.Read_Feature_Names_Txt_To_List(path_to_txts_of_selected_features + 'FeaturesAfterCorrelationAnalysisThr' + str(threshold) + '_' + acquisition + '_' + database + '.txt')[:-1]
-            # features_selected_by_correlation_acq = [feature_name.replace('-', '_') for feature_name in features_selected_by_correlation_acq]            
-            # features_selected_by_correlation_acq = [feature_name.replace('.nrrd', '') for feature_name in features_selected_by_correlation_acq]
+            features_selected_by_correlation_acq = [feature_name.replace('-', '_') for feature_name in features_selected_by_correlation_acq]            
+            features_selected_by_correlation_acq = [feature_name.replace('.nrrd', '') for feature_name in features_selected_by_correlation_acq]
             features_for_selection_after_cc = pd.read_csv(path_to_csvs + 'balanced_dataset_voxels_features_noiv_' + acquisition + '.csv', 
                                                           usecols=features_selected_by_correlation_acq)
             
@@ -410,39 +383,3 @@ if __name__ == "__main__":
                                                   info_to_balanced_dataset = balanced_dataset_info, 
                                                   threshold = threshold, 
                                                   acquisition = acquisition)
-
-
-            # ANOVA selection
-
-            # LDA selection
-
-            # MRMR selection
-
-    
-    # # features_after_correlation = Feature_Selection.get_features_by_correlations(all_features_for_correlation_analysis = , upper_threshold = , acquisition_type)
-    # # balanced_dataset_info = Preprocessing.Selection_of_balanced_dataset_of_TICIs_binary(patient_tici_info= ticis, label_of_patient_ID= ticis.columns[0], label_of_tici=ticis.columns[1])
-    # balanced_dataset_info = pd.read_csv('Balanced_dataset_Successfull_recanalisation.csv')
-    # # patients = os.listdir(path_to_maps_noiv_resampled)
-
-    # for acquisition in acquisitions:
-    #     for threshold in thresholds:
-    #         for metric in metrics:
-    #             # threshold = 0.6
-    #             model = metric + '_' + str(threshold) + '_' + acquisition
-    #             # noiv_fs_using_cc_acq = Basics.Read_Feature_Names_Txt_To_List('FeaturesAfterCorrelationAnalysisThr' + str(threshold) + acquisition + '_noiv.txt')[:-1]
-    #             # noiv_features_by_correlation_analysis_data_acq = pd.read_csv(path_to_maps_noiv_resampled + 'normalised_features_' + database + '_' + acquisition +'.csv', usecols=noiv_fs_using_cc_acq)
-    
-    #             # noiv_database_features_acquisition_metadata = pd.read_csv(output_file_name_stack + '.csv', usecols=['patient_ID', 'vx_position', 'acquisition'])
-    #             # noiv_database_features_acquisition = pd.read_csv(output_file_name_stack + '.csv', usecols=noiv_fs_using_cc_acq)
-
-    #             # select_rows_for_balanced_dataset = ((noiv_database_features_acquisition_metadata['acquisition'] == acquisition) & (noiv_database_features_acquisition_metadata['patient_ID'].isin(balanced_dataset_info['studysubjectid']))).tolist()
-    #             # balanced_metadata = noiv_database_features_acquisition_metadata.loc[select_rows_for_balanced_dataset]
-    #             # balanced_features = noiv_database_features_acquisition.loc[select_rows_for_balanced_dataset]
-
-    #             # balanced_metadata.to_csv('balanced_dataset_metadata_noiv_' + model + '.csv', index= False)
-    #             # balanced_features.to_csv('balanced_dataset_features_noiv_' + model + '.csv', index= False)
-    #             balanced_metadata = pd.read_csv('balanced_dataset_metadata_noiv_' + model + '.csv')
-    #             balanced_features = pd.read_csv('balanced_dataset_features_noiv_' + model + '.csv')
-
-    #             patients = np.unique(balanced_metadata['patient_ID'].tolist())
-                
